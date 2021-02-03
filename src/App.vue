@@ -9,33 +9,43 @@
           <router-link class="nav__link" to="/briefcase">Briefcase </router-link>
         </li>
       </ul>
-      <BriefcaseScore :score="score" :operationOnWindow="operationOnWindow"/>
     </nav>
     <div>
-      <DialogWindow :isOpenDialogWindow="isOpenDialogWindow" :operationOnWindow="operationOnWindow"/>
-      <router-view />
+      <router-view :currencys="currencys"/>
     </div>
   </main>
 </template>
 
 <script>
-  import BriefcaseScore from './components/BriefcaseScore/BriefcaseScore';
-  import DialogWindow from './components/DialogWindow/DialogWindow';
-
   export default {
-    components: {
-      BriefcaseScore,
-      DialogWindow
-    },
     data: () => {
       return {
-        score: 100,
-        isOpenDialogWindow: false,
+        urls: [
+          'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=uniswap-state-dollar%2C%20ethereum%2C%20bitcoin&order=market_cap_desc&per_page=100&page=1&sparkline=false',
+          'https://api.coingecko.com/api/v3/coins/markets?vs_currency=btc&ids=uniswap-state-dollar%2C%20ethereum%2C%20bitcoin&order=market_cap_desc&per_page=100&page=1&sparkline=false',
+          'https://api.coingecko.com/api/v3/coins/markets?vs_currency=eth&ids=uniswap-state-dollar%2C%20ethereum%2C%20bitcoin&order=market_cap_desc&per_page=100&page=1&sparkline=false',
+        ],
+        currencys: {
+
+        },
       }
     },
-    methods: {
-      operationOnWindow() {
-        this.isOpenDialogWindow = !this.isOpenDialogWindow;
+    created: async function() {
+      try {
+
+        for await (let url of this.urls) {
+          const response = await fetch(url);
+          const result   = await response.json();
+
+          const params   = await new URL(url);
+          const key      = await params.searchParams.get('vs_currency');
+  
+          this.currencys[key] = await result;
+        }
+
+      } catch (err) {
+        console.error(err);
+        throw new Error('Error: The bad request');
       }
     }
   }
@@ -83,7 +93,6 @@
   }
   
   //* ----------------------
-
 
   .container {
     padding: 1rem;

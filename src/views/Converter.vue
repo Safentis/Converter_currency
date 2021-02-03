@@ -1,5 +1,5 @@
 <template>
-  <ConvertedInputs />
+  <ConvertedInputs :currencys="currencys"/>
   <ConverterGraph />
 </template>
 
@@ -13,12 +13,8 @@
       ConvertedInputs,
       ConverterGraph
     },
+    props: {
+      currencys: Object
+    }
   }
-  
 </script>
-
-<style lang="scss">
-
- 
-
-</style>

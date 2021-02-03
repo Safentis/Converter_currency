@@ -3,7 +3,6 @@
         class="input input-correct-data_green"
         :class="[isValid ? 'input-correct-data_green' : 'input-uncorrect-data_red']" 
         @input="onChange"
-        value=""
         type="text" 
         name="convert-from" 
         placeholder="Введите числовое значение">
@@ -11,7 +10,6 @@
         class="input input-correct-data_green" 
         :class="[isValid ? 'input-correct-data_green' : 'input-uncorrect-data_red']" 
         @input="onChange"
-        value=""
         type="text" 
         name="convert-to" 
         disabled>
@@ -22,12 +20,8 @@
     export default {
         name: 'Input',
         props: {
-            name: {
-                type: String,
-            },
-            isDisabled: {
-                type: Boolean,
-            }
+            name: String,
+            isDisabled: Boolean,
         },
         data: () => {
             return {
@@ -66,11 +60,11 @@
 
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
     .input {
-    border: none;
-    border-radius: .1rem;
-    font-size: 1.6rem;
-    padding: 1rem .75rem;
-  }
+        border: none;
+        border-radius: .25rem;
+        font-size: 1.6rem;
+        padding: 1rem .75rem;
+    }
 </style>

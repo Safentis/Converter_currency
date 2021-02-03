@@ -1,5 +1,7 @@
 <template>
-    <button class="button" type="button"  
+    <button 
+        class="button" 
+        type="button"
         :class="className" 
         :data-button="attr" 
         @click="buttonMethod"
@@ -12,18 +14,10 @@
     export default {
         name: 'Button',
         props: {
-            content: {
-                type: String,
-            },
-            className: {
-                type: String,
-            },
-            buttonMethod: {
-                type: Function,
-            },
-            attr: {
-                type: String,
-            }
+            content: String,
+            className: String,
+            buttonMethod: Function,
+            attr: Number,
         },
     }
 </script>

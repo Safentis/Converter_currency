@@ -2,29 +2,82 @@
     <div class="converter">
         <label class="label converter__label">
             <span class="label__text">Конвертируемое значение:</span>
-            <Input :isDisabled="inputActive"/>
+            <Input :isDisabled="inputActive" @input="handleInput"/>
+            <Select :currencys="currencys" convert="from" :selectMethod="handleSelect" :active="from.name"/>
         </label>
         <label class="label converter__label">
             <span class="label__text">Результат:</span>
-            <Input :isDisabled="inputDisabled"/>
+            <Input :isDisabled="inputDisabled" :value="result"/>
+            <Select :currencys="currencys" convert="to" :selectMethod="handleSelect" :active="to.name"/>
         </label>
     </div>
 </template>
 
 <script>
     import Input from '../Input/Input';
+    import Select from '../Select/Select';
 
     export default {
         name: 'ConvertedInputs',
         components: {
-            Input
+            Input,
+            Select
+        },
+        props: {
+            currencys: Object
         },
         data: () => {
             return {
                 inputActive: true,
                 inputDisabled: false,
+                inputValue: '1',
+                
+                from: {
+                    name: 'usd',
+                    currentPrice: 0,
+                },
+                to: {
+                    name: 'usd',
+                    currentPrice: 0
+                },
+                
+                result: 0,
             }
-        }
+        },
+        methods: {
+            handleSelect(event) {
+                const name    = event.target.dataset.name;
+                const convert = event.target.dataset.convert;
+                
+                this[convert].name = name;
+
+                const fromName = this.from.name;
+                const toName   = this.to.name;
+                
+                this.currencys[toName].map(item => {
+                    if (fromName === item.symbol) {
+                        this.from.currentPrice = item.current_price;
+                    }
+                    if (toName === item.symbol) {
+                        this.to.currentPrice = item.current_price;
+                    }
+                });
+
+                this.handleInput()
+            },
+            handleInput(event) {
+
+                if (event) {
+                    let value = event.target.value
+                    this.inputValue = value;
+                }
+
+                let price = this.from.currentPrice;
+                let value = this.inputValue;
+
+                this.result = (price * value);
+            },
+        },
     }
 </script>
 
@@ -39,10 +92,10 @@
     .converter {
 
         &__label {
-        display: flex;
-        flex-direction: column;
-        margin: 2rem auto;
-        max-width: 40rem;
+            display: flex;
+            flex-direction: column;
+            margin: 2rem auto;
+            max-width: 40rem;
         }
     }
 
@@ -56,7 +109,6 @@
         font-size: 1.6rem;
         padding: 1rem .75rem;
     }
-
 
     // При вводе коректных данных
     .input-correct-data_green {
