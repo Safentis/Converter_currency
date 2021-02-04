@@ -1,20 +1,21 @@
 <template>
-  <ConvertedInputs :currencys="currencys"/>
-  <ConverterGraph />
+  <ConverterCurrencys :currencys="currencys"/>
 </template>
 
 <script>
-  import ConvertedInputs from '../components/ConverterInputs/ConvertedInputs';
-  import ConverterGraph from '../components/ConverterGraph/ConverterGraph';
+  import ConverterCurrencys from '../components/ConverterCurrencys/ConverterCurrencys';
 
   export default {
     name: 'Converter',
     components: {
-      ConvertedInputs,
-      ConverterGraph
+      ConverterCurrencys
     },
     props: {
       currencys: Object
-    }
+    },
   }
 </script>
+
+<style lang="scss" scoped>
+  
+</style>

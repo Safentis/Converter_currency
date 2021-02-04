@@ -1,10 +1,11 @@
 <template>
     <button 
+        type="button" 
         class="button" 
-        type="button"
-        :class="className" 
+        :class="className"
         :data-button="attr" 
-        @click="buttonMethod"
+        @click="onHandleButton"
+
     >
         {{ content }}
     </button>
@@ -14,31 +15,39 @@
     export default {
         name: 'Button',
         props: {
-            content: String,
-            className: String,
-            buttonMethod: Function,
             attr: Number,
-        },
+            className: String,
+            content: String,
+            onHandleButton: Function
+        }
     }
 </script>
 
-<style lang="scss">
-    $main-button-color: #fff;
-    $hover-button-color: rgb(70, 70, 70);
+<style lang="scss" scoped>
+    $color-button: #fff;
+    $color-content:  #555;;
+    $color-border: #000;
+
+    $color-hover-button: #555;
+    $color-hover-content: #000;
+    $color-hover-border: #555;
 
     .button {
         background-color: inherit;
-        border: .1rem solid $main-button-color;
-        border-radius: 50%;
-        color: $main-button-color;
+        border: none;
         cursor: pointer;
+        display: flex;
         font-size: 2rem;
-        outline: none;
-        transition: .4s;
+        justify-content: center;
+        transition: .2s;
 
+        min-height: 3rem;
+        min-width: 3rem;
+        
+        outline: none;
         &:hover {
-            border: .1rem solid $hover-button-color;
-            color: $hover-button-color;
+            color: $color-hover-content;
         }
     }
+
 </style>

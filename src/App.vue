@@ -1,19 +1,19 @@
 <template>
-  <main class="container">
-    <nav class="nav">
-      <ul class="nav__list">
-        <li class="nav__item">
-          <router-link class="nav__link" to="/">Converter</router-link> 
-        </li>
-        <li class="nav__item">
-          <router-link class="nav__link" to="/briefcase">Briefcase </router-link>
-        </li>
-      </ul>
-    </nav>
-    <div>
+  <nav class="nav">
+    <ul class="nav__list container">
+      <li class="nav__item">
+        <router-link class="nav__link" to="/">Converter</router-link> 
+      </li>
+      <li class="nav__item">
+        <router-link class="nav__link" to="/briefcase">Briefcase </router-link>
+      </li>
+    </ul>
+  </nav>
+  <section class="content">
+    <div class="content__body container">
       <router-view :currencys="currencys"/>
     </div>
-  </main>
+  </section>
 </template>
 
 <script>
@@ -25,9 +25,7 @@
           'https://api.coingecko.com/api/v3/coins/markets?vs_currency=btc&ids=uniswap-state-dollar%2C%20ethereum%2C%20bitcoin&order=market_cap_desc&per_page=100&page=1&sparkline=false',
           'https://api.coingecko.com/api/v3/coins/markets?vs_currency=eth&ids=uniswap-state-dollar%2C%20ethereum%2C%20bitcoin&order=market_cap_desc&per_page=100&page=1&sparkline=false',
         ],
-        currencys: {
-
-        },
+        currencys: {},
       }
     },
     created: async function() {
@@ -37,10 +35,10 @@
           const response = await fetch(url);
           const result   = await response.json();
 
-          const params   = await new URL(url);
-          const key      = await params.searchParams.get('vs_currency');
+          const params   = new URL(url);
+          const key      = params.searchParams.get('vs_currency');
   
-          this.currencys[key] = await result;
+          this.currencys[key] = result;
         }
 
       } catch (err) {
@@ -53,10 +51,6 @@
 
 <style lang="scss">
 
-  $color-white: #fff;
-  $color-link: rgb(70, 70, 70);
-  $color-bg: rgb(190, 186, 186), rgb(189, 176, 176);
-
   //* Main style options
   //* ----------------------
 
@@ -66,6 +60,10 @@
 
   html {
     font-size: 62.5%;
+  }
+
+  body {
+    margin: 0;
   }
 
   ul {
@@ -88,32 +86,35 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
-    color: $color-white;
-    background: linear-gradient(to left, $color-bg);
   }
   
   //* ----------------------
 
+  $color-white: #fff;
+  $color-link: rgb(70, 70, 70);
+  $color-bg: rgba(92, 90, 90, 0.556);
+
   .container {
-    padding: 1rem;
     max-width: 114.0rem;
     margin: 0 auto;
   }
   
   .nav {
-    align-items: flex-start;
-    display: flex;
-    justify-content: space-between;
+
+    &__list {
+      display: flex;
+      padding: 2.5rem 0;
+    }
 
     &__link {
-      color: $color-white;
+      color: $color-link;
       font-size: 2.2rem;
       font-weight: bold;
-      margin: 0 1rem;
+      margin: 0 2rem;
       
       &::after {
           content: '';
-          background-color: $color-white;
+          background-color: $color-link;
           display: block;
           height: .2rem;
           margin: 0 auto;
@@ -126,14 +127,10 @@
         &::after {
           content: '';
           transition: .7s;
-          width: 90%;
-          margin: 0 0 0 1rem;
+          width: 80%;
+          margin: 0 0 0 2.1rem;
         } 
       }
-    }
-
-    &__list {
-      display: flex;
     }
   }
   

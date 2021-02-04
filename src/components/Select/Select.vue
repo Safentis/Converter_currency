@@ -1,44 +1,47 @@
 <template>
     <ul class="select">
-        <li class="select__item"
-            v-for="(item, i) of Object.keys(currencys)"
-            :class="[active === item ? 'select__item_active' : '']"
-            :key="i"
-            :data-name="item" 
-            :data-convert="convert" 
-            @click="selectMethod"
-        >
+        <li class="select__item" v-for="(item, i) of Object.keys(currencys)" 
+            :class="[item === isConvertValue ? 'select__item_active' : '']"            
+            :key="i" 
+            :data-name="item"
+            :data-convert="type" 
+            @click="onHandleSelect"
+            >
+
             {{ item }}
         </li>
-    </ul>
+    </ul>    
 </template>
 
 <script>
     export default {
-        name: 'SelectCurrency',
+        name: 'Select',
         props: {
-            active: String,
             currencys: Object,
-            convert: String,
-            selectMethod: Function,
+            type: String,
+            onHandleSelect: Function,
+            isConvertValue: String,
         },
     }
 </script>
 
 <style lang="scss" scoped>
-    $select-main-color: #555;
+    $select-main-color: rgba(0, 0, 0, 0.616);
+    $select-main-dark: #000;
     $select-active-color: #fff;
-
+    $color-grey: #888;
+    $color-dark-grey: #777;
+    
     .select {
-        background-color: $select-main-color;
-        border: .1rem solid $select-main-color;
         margin-top: .5rem;
         
         &__item {
-            background-color: $select-main-color;
-            border: .1rem solid $select-main-color;
+            box-shadow: .0rem .0rem .1rem $color-grey, .0rem .1rem .1rem $color-dark-grey;
+            color: $select-main-color;
             cursor: pointer;
+            font-size: 2rem;
             text-transform: uppercase;
+            margin: .5rem 0;
             transition: .25s;
 
             &:hover {
@@ -46,11 +49,9 @@
                 list-style: disc;
             }
         }
-
         &__item_active {
             background-color: $select-active-color;
-            border: .1rem solid $select-main-color;
-            color: $select-main-color;
+            color: $select-main-dark;
             list-style: disc;
             text-transform: uppercase;
         }

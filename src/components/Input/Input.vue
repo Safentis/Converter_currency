@@ -1,70 +1,90 @@
 <template>
-    <input v-if="isDisabled" 
-        class="input input-correct-data_green"
-        :class="[isValid ? 'input-correct-data_green' : 'input-uncorrect-data_red']" 
-        @input="onChange"
-        type="text" 
-        name="convert-from" 
-        placeholder="Введите числовое значение">
-    <input v-else 
-        class="input input-correct-data_green" 
-        :class="[isValid ? 'input-correct-data_green' : 'input-uncorrect-data_red']" 
-        @input="onChange"
-        type="text" 
-        name="convert-to" 
-        disabled>
+    <input class="input input_correct" type="text" 
+        :class="[isValid ? '' : 'input_uncorrect']" 
+        :disabled="isDisabled"
+        :placeholder="placeholder"
+        v-model="message"
+        maxlength="9"
+        @input="onHandleInput"
+    />
 </template>
 
 <script>
-    
     export default {
         name: 'Input',
         props: {
-            name: String,
             isDisabled: Boolean,
+            placeholder: String,
         },
         data: () => {
             return {
+                message: '',
                 isValid: true,
             }
         },
         methods: {
-            onChange(e) {
-                const value  = e.target.value;
-                const result = this.validationInput(value);
+            onHandleInput() {
+                const inputValue = this.message;
+                const inputValidation = this.onValidationInput(inputValue);
 
-                if (result.flag) {
-                    this.isValid = result.flag;
-                } 
-                else {
-                    this.isValid = result.flag;
-                    e.target.value = result.value;
-                } 
-
-            },
-            validationInput(value) {
-                if (value.match(/\D/ig, '')) {
-                    value = value
-                    .split('')
-                    .map(item => isFinite(item) ? item.trim() : '')
-                    .join('');
-
-                    return { value: value, flag: false };
+                if (inputValidation.flag) {
+                    this.isValid = inputValidation.flag;
                 }
                 else {
-                    return { value: value, flag: true };
+                    this.isValid = inputValidation.flag;
+                    this.message = inputValidation.inputValue;
+                }
+            },
+            onValidationInput(inputValue) {
+                
+                if (inputValue.match(/\D/ig, '')) {
+                    inputValue = inputValue
+                    .split('')
+                    .map((item) => {
+                        return isFinite(item) 
+                            ? item.trim() 
+                            : '';
+                    })
+                    .join('');
+
+                    return { inputValue, flag: false };
+                }
+                else {
+                    return { inputValue, flag: true };
                 }
             }
         }
     }
-
 </script>
 
 <style lang="scss" scoped>
+    $color-grey: #888;
+    $color-dark-grey: #777;
+    $color-black: #000;
+    $color-green: green;
+    $color-red: red;
+
     .input {
         border: none;
         border-radius: .25rem;
         font-size: 1.6rem;
         padding: 1rem .75rem;
+        width: 100%;
+
+        &_correct {
+            box-shadow: .0rem .0rem .1rem $color-grey, .0rem .1rem .1rem $color-dark-grey;
+            &:focus {
+                outline: none;
+                box-shadow: .0rem .0rem .1rem $color-green, .0rem .1rem .1rem $color-green;
+            }
+        }
+
+        &_uncorrect {
+            box-shadow: .0rem .0rem .1rem $color-green, .0rem .1rem .1rem $color-green;
+            &:focus {
+                outline: none;
+                box-shadow: .0rem .0rem .1rem $color-red, .0rem .1rem .1rem $color-red;
+            }
+        }
     }
 </style>
