@@ -1,7 +1,10 @@
 <template>
     <section class="coins">
-        <p class="coins__score">{{ totalScore.toFixed(4) }} 
-            <span class="coins__score-sign"> $ </span>
+        <p class="coins__score">
+            <span class="coins__score-sign"> 
+               $ 
+            </span>
+            {{ totalScore.toFixed(2) }} 
         </p>
         <ul class="coins__list">
             <li class="coins__item" v-for="(item, i) of score" :key="i">
@@ -52,10 +55,10 @@
 
     .coins {
         &__score {
+            display: flex;
             font-size: 2.5rem;
-            position: absolute;
-            right: 2rem;
-            top: 2rem;
+            justify-content: flex-start;
+            margin: 0 0 2rem 0;
         }
 
         &__score-sign {

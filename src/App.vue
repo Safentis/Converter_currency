@@ -11,7 +11,10 @@
   </nav>
   <section class="content">
     <div class="content__body container">
-      <router-view :currencys="currencys"/>
+      <router-view v-if="isLoading" :currencys="currencys" :score="score" :totalScore="totalScore" :calcTotalScore="calcTotalScore"/>
+      <div v-else>
+        isLoading
+      </div>
     </div>
   </section>
 </template>
@@ -26,24 +29,69 @@
           'https://api.coingecko.com/api/v3/coins/markets?vs_currency=eth&ids=uniswap-state-dollar%2C%20ethereum%2C%20bitcoin&order=market_cap_desc&per_page=100&page=1&sparkline=false',
         ],
         currencys: {},
+        score: [],
+        totalScore: 0,
+        isLoading: true,
       }
     },
+    methods: {
+      //* Method createScoreData()
+      //* -------------------------------
+
+      createScoreData() {
+        let currencys = this.currencys; 
+        let score = this.score;
+
+        currencys.usd.map(item => {
+          score.push({
+            value: 0,
+            name: item.symbol,
+            currentPrice: item.current_price,
+            icon: item.image,
+          });
+        });
+      },
+
+      //* Method calcTotalScore()
+      //* -------------------------------
+
+      calcTotalScore() {
+        let score = this.score;
+        let count = 0;
+        
+        score.forEach(item => {
+            count += (+item.value * item.currentPrice);
+        });
+
+        this.totalScore = count;
+      },
+    },
+
+    //* The Block of the Handle Request
+    //* -------------------------------
+
+    //* -------------------------------
+    //* Events of the Life Cycle
+
     created: async function() {
       try {
+        this.isLoading = false;
 
         for await (let url of this.urls) {
-          const response = await fetch(url);
-          const result   = await response.json();
-
-          const params   = new URL(url);
-          const key      = params.searchParams.get('vs_currency');
+          let response = await fetch(url);
+          let result   = await response.json();
+          let params   = new URL(url);
+          let key      = params.searchParams.get('vs_currency');
   
           this.currencys[key] = result;
         }
+        
+        await this.createScoreData();
 
       } catch (err) {
-        console.error(err);
-        throw new Error('Error: The bad request');
+        console.err(err);
+      } finally {
+        this.isLoading = true;
       }
     }
   }
@@ -106,12 +154,15 @@
       padding: 2.5rem 0;
     }
 
+    &__item:nth-of-type(1n + 2) {
+      margin-left: 2rem;
+    }
+    
     &__link {
       color: $color-link;
       font-size: 2.2rem;
       font-weight: bold;
-      margin: 0 2rem;
-      
+
       &::after {
           content: '';
           background-color: $color-link;
@@ -127,8 +178,7 @@
         &::after {
           content: '';
           transition: .7s;
-          width: 80%;
-          margin: 0 0 0 2.1rem;
+          width: 100%;
         } 
       }
     }

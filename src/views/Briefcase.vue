@@ -1,5 +1,5 @@
 <template>
-  <BriefcaseCurrencys :currencys="currencys"/>
+  <BriefcaseCurrencys :currencys="currencys" :score="score" :totalScore="totalScore" :calcTotalScore="calcTotalScore"/>
 </template>
 
 <script>
@@ -7,11 +7,14 @@
 
   export default {
     name: 'Briefcase',
-    props: {
-      currencys: Object,
-    },
     components: {
       BriefcaseCurrencys
-    }
+    },
+    props: {
+      currencys: Object,
+      score: Array,
+      totalScore: Number,
+      calcTotalScore: Function,
+    },
   }
 </script>

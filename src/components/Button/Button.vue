@@ -29,7 +29,7 @@
     $color-border: #000;
 
     $color-hover-button: #555;
-    $color-hover-content: #000;
+    $color-hover-content: #fff;
     $color-hover-border: #555;
 
     .button {
@@ -49,5 +49,4 @@
             color: $color-hover-content;
         }
     }
-
 </style>

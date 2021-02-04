@@ -109,7 +109,6 @@
         let inputValue   = this.inputValue;
 
         this.inputResult = (currentPrice * inputValue);
-        // this.inputResult;
       },
     }
   }
