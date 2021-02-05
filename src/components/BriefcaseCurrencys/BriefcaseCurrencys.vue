@@ -1,5 +1,5 @@
 <template>
-    <div class="briefcase" ref="briefcase">
+    <div class="briefcase">
         <BriefcaseScore 
             :score="score" 
             :totalScore="totalScore" 
@@ -16,8 +16,9 @@
             :index="index"
             :totalScore="totalScore"
         />
-        <BriefcaseDiagramm 
-            :score="score" 
+        <Diagramm 
+            :options="options"
+            :score="score"
             ref="diagramm"
         />
     </div>
@@ -26,7 +27,7 @@
 <script>
     import BriefcaseScore    from './BriefcaseScore/BriefcaseScore';
     import BriefcaseModal    from './BriefcaseModal/BriefcaseModal';
-    import BriefcaseDiagramm from './BriefcaseDiagramm/BriefcaseDiagramm';
+    import Diagramm from '../Diagramm/Diagramm';
 
     export default {
         name: 'BriefcaseCurrencys',
@@ -39,18 +40,16 @@
         components: {
             BriefcaseScore,
             BriefcaseModal,
-            BriefcaseDiagramm
+            Diagramm 
         },
         data: () => {
             return {
                 isOpenDialogWindow: false,
                 index: 0,
+                options: {}
             }
         },
         methods: {
-            //* Hanle of the currencys
-            //* ----------------------
-
             onHandleModal(e) {
                 this.isOpenDialogWindow = !this.isOpenDialogWindow;
                 this.index = e.target.dataset.button || this.index;
@@ -61,15 +60,19 @@
 
                 score[index]['value'] += 1;
 
-                this.updateDataView();
+                this.calcTotalScore();
+                this.$refs.diagramm['diagrammUpdate']();
             },
             onScoreDecrement() {
                 let index = this.index;
                 let score = this.score;
 
-                score[index]['value'] > 0 ? score[index]['value'] -= 1 : score[index]['value'];
+                score[index]['value'] > 0 
+                    ? score[index]['value'] -= 1 
+                    : score[index]['value'];
 
-                this.updateDataView();
+                this.calcTotalScore();
+                this.$refs.diagramm['diagrammUpdate']();
             },
             onScoreChange(e) {
                 let index = this.index;
@@ -78,12 +81,38 @@
 
                 score[index]['value'] = +value || 0;
 
-                this.updateDataView();
-            },
-            updateDataView() {
                 this.calcTotalScore();
                 this.$refs.diagramm['diagrammUpdate']();
-            }
+            },
+            diagrammData(name) {
+                const score = this.score;
+                const data  = [];
+
+                score.map(item => {
+                    (item[name])
+                        ? data.push(item[name])
+                        : data.push(0);
+                });
+
+                return data;
+            },
+            diagrammSetOptions() {
+                const options = {
+                    type: 'bar',
+                    data: {
+                        labels: this.diagrammData('name'),
+                        datasets: [{
+                            data: this.diagrammData('value'),
+                            label: 'Распределение валют в портфеле'
+                        }],
+                    }
+                }
+
+                this.options = options;
+            },
+        },
+        mounted() {
+            this.diagrammSetOptions();
         },
     }
 </script>

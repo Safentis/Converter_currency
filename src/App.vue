@@ -11,55 +11,65 @@
   </nav>
   <section class="content">
     <div class="content__body container">
-      <router-view v-if="isLoading" :currencys="currencys" :score="score" :totalScore="totalScore" :calcTotalScore="calcTotalScore"/>
-      <div v-else>
-        isLoading
-      </div>
+      <router-view v-if="isLoading" 
+        :currencys="currencys"
+        :score="score" 
+        :totalScore="totalScore" 
+        :calcTotalScore="calcTotalScore"
+        />
+      <breeding-rhombus-spinner v-else
+        class="content__spiner"
+        :animation-duration="2000"
+        :size="65"
+        color="#000"
+      />
     </div>
   </section>
 </template>
 
 <script>
+  import { BreedingRhombusSpinner } from 'epic-spinners'
+
   export default {
+    components: {
+      BreedingRhombusSpinner
+    },
     data: () => {
       return {
-        urls: [
-          'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=uniswap-state-dollar%2C%20ethereum%2C%20bitcoin&order=market_cap_desc&per_page=100&page=1&sparkline=false',
-          'https://api.coingecko.com/api/v3/coins/markets?vs_currency=btc&ids=uniswap-state-dollar%2C%20ethereum%2C%20bitcoin&order=market_cap_desc&per_page=100&page=1&sparkline=false',
-          'https://api.coingecko.com/api/v3/coins/markets?vs_currency=eth&ids=uniswap-state-dollar%2C%20ethereum%2C%20bitcoin&order=market_cap_desc&per_page=100&page=1&sparkline=false',
-        ],
+        listCurrencys: {
+          btc: 'bitcoin',
+          eth: 'ethereum',
+          usd: 'uniswap-state-dollar',
+        },
+        listColors: ['#777', '#444', '#111'],
         currencys: {},
+        currencysDaily: {}, 
         score: [],
         totalScore: 0,
         isLoading: true,
       }
     },
     methods: {
-      //* Method createScoreData()
-      //* -------------------------------
-
       createScoreData() {
-        let currencys = this.currencys; 
-        let score = this.score;
+        this.currencys.usd.map((item, i) => {
+          let values = this.currencysDaily[item.symbol]['prices'];
+          let color  = this.listColors[i]
 
-        currencys.usd.map(item => {
-          score.push({
+          this.score.push({
             value: 0,
+            values:values,
             name: item.symbol,
             currentPrice: item.current_price,
             icon: item.image,
+            color: color
           });
         });
       },
-
-      //* Method calcTotalScore()
-      //* -------------------------------
-
       calcTotalScore() {
         let score = this.score;
         let count = 0;
         
-        score.forEach(item => {
+        score.map(item => {
             count += (+item.value * item.currentPrice);
         });
 
@@ -67,76 +77,31 @@
       },
     },
 
-    //* The Block of the Handle Request
-    //* -------------------------------
-
-    //* -------------------------------
-    //* Events of the Life Cycle
-
-    created: async function() {
+    mounted: async function() {
+      this.isLoading = false;
       try {
-        this.isLoading = false;
-
-        for await (let url of this.urls) {
-          let response = await fetch(url);
-          let result   = await response.json();
-          let params   = new URL(url);
-          let key      = params.searchParams.get('vs_currency');
+        for await (let [key, value] of Object.entries(this.listCurrencys)) {
+          const responseCurrencys      = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=${key}&ids=uniswap-state-dollar%2C%20ethereum%2C%20bitcoin&order=market_cap_desc&per_page=100&page=1&sparkline=false`);
+          const responseCurrencysDaily = await fetch(`https://api.coingecko.com/api/v3/coins/${value}/market_chart?vs_currency=usd&days=14&interval=daily`);
+          const resultCurrencys        = await responseCurrencys.json();
+          const resultCurrencysDaily   = await responseCurrencysDaily.json();
   
-          this.currencys[key] = result;
+          this.currencys[key] = resultCurrencys;
+          this.currencysDaily[key] = resultCurrencysDaily;
         }
-        
         await this.createScoreData();
-
-      } catch (err) {
-        console.err(err);
-      } finally {
+      }
+      catch (error) {
+        console.error(error);
+      }
+      finally {
         this.isLoading = true;
       }
     }
   }
 </script>
 
-<style lang="scss">
-
-  //* Main style options
-  //* ----------------------
-
-  *, ::after, ::before {
-    box-sizing: border-box;
-  }
-
-  html {
-    font-size: 62.5%;
-  }
-
-  body {
-    margin: 0;
-  }
-
-  ul {
-    padding: 0;
-    margin: 0;
-    list-style: none;
-  }
-
-  a {
-    text-decoration: none;
-  }
-
-  p {
-    margin-block-start: 0;
-    margin-block-end: 0;
-  }
-
-  #app {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-  }
-  
-  //* ----------------------
+<style lang="scss" scoped>
 
   $color-white: #fff;
   $color-link: rgb(70, 70, 70);
@@ -182,6 +147,11 @@
         } 
       }
     }
+  }
+  .content__spiner {
+    position: absolute;
+    left: 45%;
+    top: 45%;
   }
   
 </style>

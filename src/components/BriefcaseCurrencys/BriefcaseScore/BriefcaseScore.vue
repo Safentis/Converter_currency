@@ -16,7 +16,7 @@
                     width="25"
                 >
                 <p class="coins__count">{{ item.value }}</p>
-                <p class="coins__price">{{ item.currentPrice }}</p>
+                <p class="coins__price">{{ item.currentPrice + ' ' + '$' }}</p>
                 <Button 
                     className="coins__button" 
                     content="+" 
