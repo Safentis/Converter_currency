@@ -1,30 +1,32 @@
 <template>
-  <nav class="nav">
-    <ul class="nav__list container">
-      <li class="nav__item">
-        <router-link class="nav__link" to="/">Converter</router-link> 
-      </li>
-      <li class="nav__item">
-        <router-link class="nav__link" to="/briefcase">Briefcase </router-link>
-      </li>
-    </ul>
-  </nav>
-  <section class="content">
-    <div class="content__body container">
-      <router-view v-if="isLoading" 
-        :currencys="currencys"
-        :score="score" 
-        :totalScore="totalScore" 
-        :calcTotalScore="calcTotalScore"
-        />
-      <breeding-rhombus-spinner v-else
-        class="content__spiner"
-        :animation-duration="2000"
-        :size="65"
-        color="#000"
+  <div class="content" v-if="isLoading">
+    <nav class="nav content__nav">
+      <ul class="nav__list">
+        <li class="nav__item">
+          <router-link class="nav__link" to="/">
+            Конвертёр
+          </router-link> 
+        </li>
+        <li class="nav__item">
+          <router-link class="nav__link" to="/briefcase">
+            Портфель
+          </router-link>
+        </li>
+      </ul>
+    </nav>
+    <router-view 
+      :currencys="currencys"
+      :score="score" 
+      :totalScore="totalScore" 
+      :calcTotalScore="calcTotalScore"
       />
-    </div>
-  </section>
+  </div>
+  <breeding-rhombus-spinner v-else
+    class="spiner"
+    :animation-duration="2000"
+    :size="65"
+    color="#000"
+  />
 </template>
 
 <script>
@@ -41,7 +43,11 @@
           eth: 'ethereum',
           usd: 'uniswap-state-dollar',
         },
-        listColors: ['#777', '#444', '#111'],
+        listColors: [
+          '#777', 
+          '#444', 
+          '#111'
+        ],
         currencys: {},
         currencysDaily: {}, 
         score: [],
@@ -75,18 +81,26 @@
 
         this.totalScore = count;
       },
+      loadingOn() {
+        this.isLoading = false;
+      },
+      loadingOff() {
+        this.isLoading = true;
+      }
     },
 
     mounted: async function() {
-      this.isLoading = false;
+      const listCurrencys = Object.entries(this.listCurrencys);
+
+      this.loadingOn();
       try {
-        for await (let [key, value] of Object.entries(this.listCurrencys)) {
+        for await (let [key, value] of listCurrencys) {
           const responseCurrencys      = await fetch(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=${key}&ids=uniswap-state-dollar%2C%20ethereum%2C%20bitcoin&order=market_cap_desc&per_page=100&page=1&sparkline=false`);
           const responseCurrencysDaily = await fetch(`https://api.coingecko.com/api/v3/coins/${value}/market_chart?vs_currency=usd&days=14&interval=daily`);
           const resultCurrencys        = await responseCurrencys.json();
           const resultCurrencysDaily   = await responseCurrencysDaily.json();
   
-          this.currencys[key] = resultCurrencys;
+          this.currencys[key]      = resultCurrencys;
           this.currencysDaily[key] = resultCurrencysDaily;
         }
         await this.createScoreData();
@@ -95,7 +109,7 @@
         console.error(error);
       }
       finally {
-        this.isLoading = true;
+        this.loadingOff();
       }
     }
   }
@@ -103,55 +117,72 @@
 
 <style lang="scss" scoped>
 
+  $color-light-grey: #999;
   $color-white: #fff;
   $color-link: rgb(70, 70, 70);
   $color-bg: rgba(92, 90, 90, 0.556);
 
-  .container {
+  .spiner {
+    position: absolute;
+    left: 43.5%;
+    top: 43.5%;
+  }
+
+  @media (max-width: 768px) {
+    .content {
+      max-width: none;
+    }
+    .nav__list {
+      justify-content: center;  
+    }
+  }
+
+  .content {
+    background-color: $color-white;
+    box-shadow: 
+      .1rem .1rem .25rem $color-light-grey, 
+      -.1rem -.1rem .25rem $color-light-grey;
+    border-radius: .5rem;
     max-width: 114.0rem;
     margin: 0 auto;
+    padding: 0 1.5rem;
+    position: relative;
   }
   
-  .nav {
+  .nav__list {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 2.5rem 0;
+  }
 
-    &__list {
-      display: flex;
-      padding: 2.5rem 0;
+  .nav__item {
+    margin: .5rem 1rem .5rem 0;
+  }
+
+  .nav__link {
+    color: $color-link;
+    font-size: 2.2rem;
+    font-weight: bold;
+  }
+
+  .nav__link {
+    &::after {
+      content: '';
+      background-color: $color-link;
+      display: block;
+      height: .2rem;
+      margin: 0 auto;
+      width: 0;
     }
 
-    &__item:nth-of-type(1n + 2) {
-      margin-left: 2rem;
-    }
-    
-    &__link {
+    &.router-link-exact-active {
       color: $color-link;
-      font-size: 2.2rem;
-      font-weight: bold;
 
       &::after {
-          content: '';
-          background-color: $color-link;
-          display: block;
-          height: .2rem;
-          margin: 0 auto;
-          width: 0;
-      }
-
-      &.router-link-exact-active {
-        color: $color-link;
-
-        &::after {
-          content: '';
-          transition: .7s;
-          width: 100%;
-        } 
-      }
+        content: '';
+        transition: .7s;
+        width: 100%;
+      } 
     }
   }
-  .content__spiner {
-    position: absolute;
-    left: 45%;
-    top: 45%;
-  }
-  
 </style>

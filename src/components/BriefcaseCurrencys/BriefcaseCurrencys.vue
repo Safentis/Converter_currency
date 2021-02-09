@@ -1,5 +1,8 @@
 <template>
     <div class="briefcase">
+        <BriefcaseTotalScore 
+            :totalScore="totalScore" 
+        />
         <BriefcaseScore 
             :score="score" 
             :totalScore="totalScore" 
@@ -25,9 +28,10 @@
 </template>
 
 <script>
-    import BriefcaseScore    from './BriefcaseScore/BriefcaseScore';
-    import BriefcaseModal    from './BriefcaseModal/BriefcaseModal';
-    import Diagramm from '../Diagramm/Diagramm';
+    import BriefcaseTotalScore from './BriefcaseTotalScore/BriefcaseTotalScore';
+    import BriefcaseScore      from './BriefcaseScore/BriefcaseScore';
+    import BriefcaseModal      from './BriefcaseModal/BriefcaseModal';
+    import Diagramm            from '../Diagramm/Diagramm';
 
     export default {
         name: 'BriefcaseCurrencys',
@@ -38,6 +42,7 @@
             calcTotalScore: Function,
         },
         components: {
+            BriefcaseTotalScore,
             BriefcaseScore,
             BriefcaseModal,
             Diagramm 

@@ -50,6 +50,16 @@
     }
 </script>
 
-<style lang="stylus" scoped>
+<style lang="scss" scoped>
 
+  @media (max-width: 468px) {
+    .converter .converter__block {
+        max-width: 80%;
+    }
+  }
+
+  .converter__block {
+      max-width: 40rem;
+      margin: 2.5rem auto;
+  }
 </style>

@@ -138,13 +138,3 @@
     },
   }
 </script>
-
-<style lang="scss" scoped>
-  .converter {
-
-    &__block {
-      max-width: 40rem;
-      margin: 2.5rem auto;
-    }
-  }
-</style>

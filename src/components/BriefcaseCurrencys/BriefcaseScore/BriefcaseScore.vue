@@ -1,11 +1,5 @@
 <template>
-    <section class="coins">
-        <p class="coins__score">
-            <span class="coins__score-sign"> 
-               $ 
-            </span>
-            {{ totalScore.toFixed(2) }} 
-        </p>
+    <div class="coins">
         <ul class="coins__list">
             <li class="coins__item" v-for="(item, i) of score" :key="i">
                 <p class="coins__name">{{ item.name }}</p>
@@ -25,7 +19,7 @@
                 />
             </li>
         </ul>
-    </section>
+    </div>
 </template>
 
 <script>
@@ -38,7 +32,6 @@
         },
         props: {
             score: Array,
-            totalScore: Number,
             onHandleModal: Function,
         }
     }
@@ -54,20 +47,16 @@
     $color-green: green;
 
     .coins {
-        &__score {
-            display: flex;
-            font-size: 2.5rem;
-            justify-content: flex-start;
-            margin: 0 0 2rem 0;
-        }
-
-        &__score-sign {
-            color: $color-green;
-        }
+        background-color: $color-grey;
+        box-shadow: 
+            .1rem .1rem .1rem $color-grey-999, 
+            -.1rem -.1rem .1rem $color-grey-999;
+        padding: 1rem;
 
         &__list {
             display: grid;
-            grid-template-columns: repeat(3, 25rem);
+            grid-template-columns: repeat(auto-fill, minmax(15rem, 25rem));
+            justify-content: center;
             grid-gap: 1rem;
         }
 

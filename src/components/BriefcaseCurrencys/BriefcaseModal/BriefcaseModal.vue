@@ -94,7 +94,7 @@
         &__inner {
             background-color: $color-innner;
             box-shadow: .2rem .2rem .15rem $color-shadow, .1rem .1rem .2rem $color-shadow;
-            height: 40%;
+            height: 25rem;
             padding: 1rem;
             width: 40rem;
             min-width: 20rem;
